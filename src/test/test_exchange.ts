@@ -4,16 +4,17 @@ import logger from '../util/logger.js';
 async function testExchange() {
     try {
         logger.info('开始测试 OKX 交易所连接...');
-        
+
         // 1. 测试初始化设置（模拟环境通常不需要真实 symbol 也能调用，但最好给一个）
         const symbol = 'BTC/USDT:USDT';
         await okxExchange.initAccountSettings(symbol);
-        
+
         // 2. 测试获取余额
-        const balance = await okxExchange.getBalance();
+        const balance = await okxExchange.getBalance('USDT');
         logger.info('账户余额获取成功');
-        logger.info('账户信息: %s', balance.USDT);
-        
+        logger.info(`账户信息: ${balance.toString()}`);
+        logger.info(`可用余额: ${balance.getFree()}`);
+
         logger.info('OKX 交易所连接测试完成！');
     } catch (error: any) {
         logger.error(`测试过程中出错: ${error.message}`);

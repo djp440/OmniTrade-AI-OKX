@@ -1,6 +1,7 @@
 import { okx } from 'ccxt';
 import { config } from '../util/config.js';
 import logger from '../util/logger.js';
+import { Balance } from '../model/balance.js';
 
 /**
  * OKX 交易所连接封装类
@@ -95,11 +96,21 @@ export class OKXExchange {
     }
 
     /**
-     * 获取余额
+     * 获取指定币种的余额
+     * @param currency 币种名称，默认 USDT
      */
-    async getBalance() {
+    async getBalance(currency: string = 'USDT'): Promise<Balance> {
         try {
-            return await this.client.fetchBalance();
+            const rawBalance = await this.client.fetchBalance();
+            // CCXT 的 fetchBalance 返回结构中，可以通过 rawBalance[currency] 获取特定币种的 {free, used, total}
+            const currencyBalance = rawBalance[currency];
+
+            if (!currencyBalance) {
+                logger.warn(`未找到币种 ${currency} 的余额信息`);
+                return new Balance({ free: 0, used: 0, total: 0 });
+            }
+
+            return new Balance(currencyBalance);
         } catch (error) {
             logger.error('获取余额失败:', error);
             throw error;
