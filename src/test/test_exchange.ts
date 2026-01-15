@@ -5,8 +5,8 @@ async function testExchange() {
     try {
         logger.info('开始测试 OKX 交易所连接...');
 
-        // 1. 测试初始化设置（模拟环境通常不需要真实 symbol 也能调用，但最好给一个）
-        const symbol = 'BTC/USDT:USDT';
+        // 1. 测试初始化设置（原生 API 格式：BTC-USDT-SWAP）
+        const symbol = 'BTC-USDT-SWAP';
         await okxExchange.initAccountSettings(symbol);
 
         // 2. 测试获取余额
@@ -14,6 +14,14 @@ async function testExchange() {
         logger.info('账户余额获取成功');
         logger.info(`账户信息: ${balance.toString()}`);
         logger.info(`可用余额: ${balance.getFree()}`);
+
+        // 3. 测试获取持仓信息
+        logger.info('正在获取持仓信息...');
+        const positions = await okxExchange.getPositions('SWAP', 'ETH-USDT-SWAP');
+        logger.info(`获取到 ${positions.length} 条持仓记录`);
+        positions.forEach(pos => {
+            logger.info(`持仓详情: ${pos.toString()}`);
+        });
 
         logger.info('OKX 交易所连接测试完成！');
     } catch (error: any) {
