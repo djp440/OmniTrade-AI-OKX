@@ -40,6 +40,16 @@ export interface IndicatorConfig {
 export interface TradeConfig {
     paperTrade: boolean;
     risk: number; // 单笔交易最高风险，单位为%
+    level: number; // 杠杆倍数
+}
+
+export interface LlmModelConfig {
+    visual_model: string;
+    simple_analysis_model: string;
+    risk_analysis_model: string;
+    main_model: string;
+    temperature: number;
+    reasoning_effort: string;
 }
 
 export interface Config {
@@ -47,6 +57,13 @@ export interface Config {
     env: EnvConfig;
     trade: TradeConfig;
     indicator: IndicatorConfig;
+    llm: LlmModelConfig;
+    system_prompt: {
+        visual: string;
+        simple_analysis: string;
+        risk_analysis: string;
+        main: string;
+    };
 }
 
 const CONFIG_FILE = path.join(process.cwd(), 'config.toml');
@@ -79,16 +96,29 @@ export function loadConfig(): Config {
         };
 
         // 解析 llm 配置
-        const llmConfig = tomlConfig.llm || {};
-        const visualModel = llmConfig.visual_model || 'gpt-4o-mini';
-        const simpleAnalysisModel = llmConfig.simple_analysis_model || 'gpt-3.5-turbo';
-        const mainModel = llmConfig.main_model || 'gpt-4o-mini';
+        const llmConfig: LlmModelConfig = {
+            visual_model: tomlConfig.llm?.visual_model || 'gpt-4o-mini',
+            simple_analysis_model: tomlConfig.llm?.simple_analysis_model || 'gpt-3.5-turbo',
+            risk_analysis_model: tomlConfig.llm?.risk_analysis_model || 'gpt-3.5-turbo',
+            main_model: tomlConfig.llm?.main_model || 'gpt-4o-mini',
+            temperature: tomlConfig.llm?.temperature || 0.2,
+            reasoning_effort: tomlConfig.llm?.reasoning_effort || 'medium',
+        };
+
+        // 解析 system_prompt 配置
+        const systemPrompt = {
+            visual: tomlConfig.system_prompt?.visual || '',
+            simple_analysis: tomlConfig.system_prompt?.simple_analysis || '',
+            risk_analysis: tomlConfig.system_prompt?.risk_analysis || '',
+            main: tomlConfig.system_prompt?.main || '',
+        };
 
         // 解析 indicator 配置
         const indicatorConfig = tomlConfig.indicator || {};
         const ema = indicatorConfig.ema || 20;
-        const risk = indicatorConfig.risk || 2;
-        
+        const level = indicatorConfig.level || 3; // 杠杆倍数
+        const risk = tomlConfig.trade?.risk || 2;
+
         // 组装主配置对象
         return {
             candle: tomlConfig.candle,
@@ -96,10 +126,13 @@ export function loadConfig(): Config {
             trade: {
                 paperTrade: tomlConfig.trade?.paper_trade || false,
                 risk,
+                level,
             },
             indicator: {
                 ema,
             },
+            llm: llmConfig,
+            system_prompt: systemPrompt,
         };
     } catch (error) {
         logger.error('读取或解析配置时出错:', error);

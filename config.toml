@@ -11,6 +11,7 @@ macro_interval_count = 24
 [trade]
 paper_trade = true
 risk = 2 # 单笔交易最高风险，单位为%
+level = 3 # 杠杆倍数
 
 [indicator]
 ema = 20
