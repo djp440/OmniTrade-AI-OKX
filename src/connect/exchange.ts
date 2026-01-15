@@ -182,6 +182,26 @@ export class OKXExchange {
     }
 
     /**
+     * 获取系统时间
+     * GET /api/v5/public/time
+     * @returns 系统时间戳 (毫秒)
+     */
+    async getSystemTime(): Promise<number> {
+        try {
+            // OKX API: /api/v5/public/time
+            const data = await this.request('GET', '/api/v5/public/time');
+            
+            if (data && data.length > 0 && data[0].ts) {
+                return Number(data[0].ts);
+            }
+            throw new Error('无法解析系统时间响应');
+        } catch (error) {
+            logger.error('获取系统时间失败:', error);
+            throw error;
+        }
+    }
+
+    /**
      * 获取指定币种的余额
      * @param currency 币种名称，默认 USDT
      */
