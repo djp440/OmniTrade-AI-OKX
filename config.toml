@@ -5,24 +5,24 @@ macro_interval = "1w"
 
 micro_interval_count = 28
 trade_interval_count = 30
-image_candle_count = 200 # 图像k线数量用于指定绘制k线图表的k线数量，周期与trade_interval一致
+image_candle_count = 200  # 图像k线数量用于指定绘制k线图表的k线数量，周期与trade_interval一致
 macro_interval_count = 24
 
 [trade]
 paper_trade = true
-risk = 2 # 单笔交易最高风险，单位为%
-level = 3 # 杠杆倍数
+risk = 2           # 单笔交易最高风险，单位为%
+level = 3          # 杠杆倍数
 
 [indicator]
 ema = 20
 
 [llm]
-visual_model = "gpt-4o-mini"
-simple_analysis_model = "gpt-3.5-turbo"
-risk_analysis_model = "gpt-3.5-turbo"
-main_model = "gpt-4o-mini"
-temperature = 0.2
-reasoning_effort = "medium" # none|low|medium|high
+visual_model = "google/gemma-3-27b-it"
+simple_analysis_model = "openai/gpt-oss-120b"
+risk_analysis_model = "openai/gpt-oss-120b"
+main_model = "openai/gpt-oss-120b"
+temperature = 0.3
+reasoning_effort = "high"                     # none|low|medium|high
 
 [system_prompt]
 # 视觉分析模型
