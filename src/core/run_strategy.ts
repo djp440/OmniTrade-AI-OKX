@@ -4,6 +4,7 @@ import { getCandles } from "../connect/market.js";
 import { parentPort, workerData, isMainThread } from "worker_threads";
 import { drawKLineChartLWC } from "../util/draw_lwc.js";
 import { calculateEMA } from "../util/indicator.js";
+import { analyzeImage, analyzeOHLCV } from "./strategy_functions.js";
 
 // 获取k线周期配置参数
 const microInterval = config.candle.micro_interval;
@@ -128,10 +129,9 @@ async function strategyCore(symbol: string) {
   macroCandles.shift();
   microCandles.shift();
 
-    // 分析micro周期
-    const micro_ema = calculateEMA(microCandles, emaPeriod);
-    const micro_image = drawKLineChartLWC(microCandles, micro_ema, microInterval);
-    
+  // 分析micro周期
+  const micro_ema = calculateEMA(microCandles, emaPeriod);
+  const micro_image = drawKLineChartLWC(microCandles, micro_ema, microInterval);
 }
 
 // 如果直接运行此文件

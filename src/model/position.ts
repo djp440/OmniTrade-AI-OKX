@@ -77,6 +77,12 @@ export class Position {
      * 格式化输出
      */
     toString(): string {
-        return `Position: [${this.instId} ${this.getSideText()}] 数量: ${this.quantity}, 均价: ${this.entryPrice}, 盈亏: ${this.unrealizedPnl} (${(this.unrealizedPnlRatio * 100).toFixed(2)}%), 保证金率: ${(this.marginRatio * 100).toFixed(2)}%`;
+        return `Position: [${this.instId} ${this.getSideText()}] 数量: ${
+          this.quantity
+        }, 均价: ${this.entryPrice}, 盈亏率: ${(
+          this.unrealizedPnlRatio * 100
+        ).toFixed(2)}%, 保证金率（越高越安全，降至100%时爆仓）: ${(this.marginRatio * 100).toFixed(
+          2
+        )}%，爆仓价：${this.liquidationPrice}`;
     }
 }
