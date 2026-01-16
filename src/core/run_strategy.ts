@@ -1,10 +1,15 @@
 import { config } from "../util/config.js";
-import logger from "../util/logger.js";
+import logger, { LogColor } from "../util/logger.js";
 import { getCandles } from "../connect/market.js";
 import { parentPort, workerData, isMainThread } from "worker_threads";
 import { drawKLineChartLWC } from "../util/draw_lwc.js";
 import { calculateEMA } from "../util/indicator.js";
-import { analyzeImage, analyzeOHLCV } from "./strategy_functions.js";
+import {
+  analyzeImage,
+  analyzeOHLCV,
+  analyzeRisk,
+  decision,
+} from "./strategy_functions.js";
 
 // 获取k线周期配置参数
 const microInterval = config.candle.micro_interval;
@@ -83,7 +88,8 @@ export async function runStrategy(symbol: string) {
       logger.info(
         `[${symbol}] 等待下一次 ${tradeInterval} K线收盘... 预计等待 ${(
           waitTime / 1000
-        ).toFixed(1)} 秒`
+        ).toFixed(1)} 秒`,
+        { color: LogColor.Blue }
       );
 
       await new Promise(resolve => setTimeout(resolve, waitTime));
@@ -91,13 +97,19 @@ export async function runStrategy(symbol: string) {
       // 唤醒后执行操作
       try {
         // TODO: 在这里调用分析模块和交易模块
-        logger.info(`[${symbol}] 开始执行策略分析...`);
-        // 调用交易逻辑函数
-        await strategyCore(symbol);
+        logger.info(`[${symbol}] 开始执行策略分析...`, {
+          color: LogColor.Blue,
+        });
+        // 调用分析函数
+        const decisionResult = await getDecision(symbol);
 
-        logger.info(`[${symbol}] 策略周期 ${tradeInterval} 执行完毕`);
+        logger.info(`[${symbol}] 策略周期 ${tradeInterval} 执行完毕`, {
+          color: LogColor.Blue,
+        });
       } catch (err) {
-        logger.error(`[${symbol}] 策略执行周期内发生错误:`, err);
+        logger.error(`[${symbol}] 策略执行周期内发生错误:`, err, {
+          color: LogColor.Blue,
+        });
         // 出错后不中断循环，继续下一次
       }
     }
@@ -107,7 +119,13 @@ export async function runStrategy(symbol: string) {
   }
 }
 
-async function strategyCore(symbol: string) {
+//======================================================================================
+
+/**
+ * 交易主逻辑
+ * @param symbol 交易对名称
+ */
+async function getDecision(symbol: string) {
   logger.info(`[${symbol}] 开始执行交易主逻辑.`);
   //重置数组内容
   macroCandles = [];
@@ -116,7 +134,7 @@ async function strategyCore(symbol: string) {
 
   //一次性获取所有k线数据，包括图像生成所需的额外k线
   try {
-    const [microCandles, tradeCandles, macroCandles] = await Promise.all([
+    [microCandles, tradeCandles, macroCandles] = await Promise.all([
       getCandles(symbol, microInterval, microIntervalCount + imageCandleCount),
       getCandles(symbol, tradeInterval, tradeIntervalCount + imageCandleCount),
       getCandles(symbol, macroInterval, macroIntervalCount + imageCandleCount),
@@ -130,13 +148,143 @@ async function strategyCore(symbol: string) {
   microCandles.shift();
 
   // 分析micro周期
+  logger.info(`[${symbol}] 开始分析${microInterval}周期数据...`, {
+    color: "yellow",
+  });
   const micro_ema = calculateEMA(microCandles, emaPeriod);
-  const micro_image = drawKLineChartLWC(microCandles, micro_ema, microInterval);
+  const micro_image = await drawKLineChartLWC(
+    microCandles,
+    micro_ema,
+    microInterval
+  );
+  let microImageAnalysis, microOHLCVAnalysis;
+  try {
+    [microImageAnalysis, microOHLCVAnalysis] = await Promise.all([
+      analyzeImage(microInterval, micro_image),
+      analyzeOHLCV(
+        microInterval,
+        microCandles.slice(1, microIntervalCount + 1),
+        micro_ema
+      ),
+    ]);
+  } catch (e) {
+    logger.error(`[${symbol}] 分析${microInterval}周期失败，跳过本轮收盘:`, e);
+  }
+  const microAnalysis = `
+  \`\`\`yaml\n
+  ${microInterval}interval:\n
+  \timageAnalysis: ${microImageAnalysis}\n
+  \tdataAnalysis: ${microOHLCVAnalysis}\n
+  \`\`\`
+  `;
+  logger.info(`[${symbol}] ${microInterval}周期分析结果: \n${microAnalysis}`, {
+    color: "green",
+  });
+
+  //分析trade周期
+  logger.info(`[${symbol}] 开始分析${tradeInterval}周期数据...`, {
+    color: "yellow",
+  });
+  const trade_ema = calculateEMA(tradeCandles, emaPeriod);
+  const trade_image = await drawKLineChartLWC(
+    tradeCandles,
+    trade_ema,
+    tradeInterval
+  );
+  let tradeImageAnalysis, tradeOHLCVAnalysis;
+  try {
+    [tradeImageAnalysis, tradeOHLCVAnalysis] = await Promise.all([
+      analyzeImage(tradeInterval, trade_image),
+      analyzeOHLCV(
+        tradeInterval,
+        tradeCandles.slice(1, tradeIntervalCount + 1),
+        trade_ema
+      ),
+    ]);
+  } catch (e) {
+    logger.error(`[${symbol}] 分析${tradeInterval}周期失败，跳过本轮收盘:`, e);
+  }
+  const tradeAnalysis = `
+  \`\`\`yaml\n
+  ${tradeInterval}interval:\n
+  \timageAnalysis: ${tradeImageAnalysis}\n
+  \tdataAnalysis: ${tradeOHLCVAnalysis}\n
+  \`\`\`
+  `;
+  logger.info(`[${symbol}] ${tradeInterval}周期分析结果: \n${tradeAnalysis}`, {
+    color: "green",
+  });
+
+  //分析macro周期
+  logger.info(`[${symbol}] 开始分析${macroInterval}周期数据...`, {
+    color: "yellow",
+  });
+  const macro_ema = calculateEMA(macroCandles, emaPeriod);
+  const macro_image = await drawKLineChartLWC(
+    macroCandles,
+    macro_ema,
+    macroInterval
+  );
+  let macroImageAnalysis, macroOHLCVAnalysis;
+  try {
+    [macroImageAnalysis, macroOHLCVAnalysis] = await Promise.all([
+      analyzeImage(macroInterval, macro_image),
+      analyzeOHLCV(
+        macroInterval,
+        macroCandles.slice(1, macroIntervalCount + 1),
+        macro_ema
+      ),
+    ]);
+  } catch (e) {
+    logger.error(`[${symbol}] 分析${macroInterval}周期失败，跳过本轮收盘:`, e);
+  }
+  const macroAnalysis = `
+  \`\`\`yaml\n
+  ${macroInterval}interval:\n
+  \timageAnalysis: ${macroImageAnalysis}\n
+  \tdataAnalysis: ${macroOHLCVAnalysis}\n
+  \`\`\`
+  `;
+  logger.info(`[${symbol}] ${macroInterval}周期分析结果: \n${macroAnalysis}`, {
+    color: "green",
+  });
+
+  //分析账户风险
+  logger.info(`[${symbol}] 开始分析账户风险...`, {
+    color: "yellow",
+  });
+  const riskAnalysis = await analyzeRisk(symbol);
+  const riskAnalysisText = `
+  \`\`\`yaml\n
+  riskAnalysis:\n
+  \t${riskAnalysis}\n
+  \`\`\`
+  `;
+  logger.info(`[${symbol}] 账户风险分析结果: \n${riskAnalysisText}`, {
+    color: "green",
+  });
+
+  // 合并所有分析结果
+  const allAnalysis = `${microAnalysis}${tradeAnalysis}${macroAnalysis}${riskAnalysisText}`;
+
+  //进行最终决策
+  logger.info(`[${symbol}] 进行最终决策...`, {
+    color: "yellow",
+  });
+  const decisionResult = await decision(allAnalysis);
+  logger.info(
+    `[${symbol}] 本轮最终决策: ${JSON.stringify(decisionResult, null, 2)}`,
+    { color: "green" }
+  );
+  return decisionResult;
 }
+
+//======================================================================================
 
 // 如果直接运行此文件
 import { fileURLToPath } from "url";
 import { Candle } from "../model/candle.js";
+import { color } from "echarts/types/dist/core";
 const isMainModule = process.argv[1] === fileURLToPath(import.meta.url);
 
 if (!isMainThread) {

@@ -3,6 +3,8 @@ import { openaiConnector } from "../connect/openai.js";
 import { formatCandlesWithEma } from "../util/format.js";
 import { Candle } from "../model/candle.js";
 import { okxExchange, OKXExchange } from "../connect/exchange.js";
+
+
 /**
  * 分析图像
  * @param interval 时间周期
@@ -34,7 +36,7 @@ export async function analyzeImage(interval: string, imageUrl: string) {
 export async function analyzeOHLCV(
   interval: string,
   ohlcv: Candle[],
-  ema: number[]
+  ema: (number | null)[]
 ) {
   const systemPrompt = config.system_prompt.simple_analysis;
   const formatData = formatCandlesWithEma(ohlcv, ema);
@@ -57,7 +59,7 @@ export async function analyzeOHLCV(
  * @param symbol 交易对
  * @returns 分析结果
  */
-export async function analyzRisk(symbol: string) {
+export async function analyzeRisk(symbol: string) {
   //获取余额
   const balance = await okxExchange.getBalance();
   const total = balance.getTotal();
