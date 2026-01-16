@@ -12,7 +12,7 @@ macro_interval_count = 24
 paper_trade = true
 risk = 2           # 单笔交易最高风险，单位为%
 level = 3          # 杠杆倍数
-
+symbols = ["BTC-USDT-SWAP", "ETH-USDT-SWAP"] # 要运行的交易对
 [indicator]
 ema = 20
 

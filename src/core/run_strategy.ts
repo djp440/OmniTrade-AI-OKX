@@ -68,17 +68,7 @@ export async function runStrategy() {
 
             // 唤醒后执行操作
             try {
-                // 这里是 K 线收盘时的操作逻辑
-                const symbol = 'BTC-USDT-SWAP'; // 示例交易对
 
-                // 1. 获取刚刚收盘的那根 K 线数据
-                // 至少获取3根才能获取到刚刚收盘的那根k线
-                const candles = await getCandles(symbol, tradeInterval, 3);
-                if (candles && candles.length > 0) {
-                    logger.info(`获取到 ${symbol} 最新收盘的K线: ${candles[1].toString()}`);
-                }
-
-                // 2. 执行核心策略逻辑 (目前占位)
                 // TODO: 在这里调用分析模块和交易模块
 
 

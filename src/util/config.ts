@@ -41,6 +41,7 @@ export interface TradeConfig {
     paperTrade: boolean;
     risk: number; // 单笔交易最高风险，单位为%
     level: number; // 杠杆倍数
+    symbols: string[]; // 要运行的交易对
 }
 
 export interface LlmModelConfig {
@@ -127,6 +128,7 @@ export function loadConfig(): Config {
                 paperTrade: tomlConfig.trade?.paper_trade || false,
                 risk,
                 level,
+                symbols: tomlConfig.trade?.symbols || [],
             },
             indicator: {
                 ema,
