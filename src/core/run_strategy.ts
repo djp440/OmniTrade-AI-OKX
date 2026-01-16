@@ -114,7 +114,7 @@ async function strategyCore(symbol: string) {
         logger.error(`[${symbol}] 获取k线数据失败，跳过本轮收盘:`, err);
     }
 
-
+    
 
 }
 
