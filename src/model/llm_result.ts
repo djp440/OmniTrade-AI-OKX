@@ -5,7 +5,8 @@ export type TradeAction =
   | "ENTRY_SHORT"
   | "EXIT_LONG"
   | "EXIT_SHORT"
-  | "NO_OP";
+  | "NO_OP"
+  | "UPDATE_STOP_LOSS";
 
 /**
  * LLM 分析结果原始数据接口
@@ -47,6 +48,7 @@ export class LLMAnalysisResult {
       "EXIT_LONG",
       "EXIT_SHORT",
       "NO_OP",
+      "UPDATE_STOP_LOSS",
     ];
     if (validActions.includes(action as TradeAction)) {
       return action as TradeAction;
@@ -60,7 +62,7 @@ export class LLMAnalysisResult {
    */
   private validateLogic() {
     if (
-      (this.action === "ENTRY_LONG" || this.action === "ENTRY_SHORT") &&
+      (this.action === "ENTRY_LONG" || this.action === "ENTRY_SHORT") && 
       (this.stopLoss === null || this.quantity === null)
     ) {
       logger.warn(

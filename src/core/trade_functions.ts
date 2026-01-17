@@ -4,6 +4,7 @@ import {
   openMarketOrder,
   openMarketOrderWithTPSL,
   closeAllPositions,
+  updateStopLoss
 } from "../connect/trade.js";
 
 export async function trade(symbol: string, decisionResult: LLMAnalysisResult) {
@@ -55,6 +56,14 @@ export async function trade(symbol: string, decisionResult: LLMAnalysisResult) {
 
       case "EXIT_SHORT":
         await closeAllPositions(symbol);
+        break;
+      
+      case "UPDATE_STOP_LOSS":
+        if (stopLoss) {
+          await updateStopLoss(symbol, stopLoss.toString());
+        } else {
+          logger.warn(`[${symbol}] 建议更新止损但未提供有效止损价格`);
+        }
         break;
 
       case "NO_OP":
