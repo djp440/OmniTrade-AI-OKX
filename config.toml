@@ -12,16 +12,16 @@ trade_interval_count = 90
 level = 5 # 杠杆倍数
 paper_trade = true 
 risk = 3 # 单笔交易最高风险，单位为%
-symbols = ["BTC-USDT-SWAP"] # 要运行的交易对                       
+symbols = ["BTC-USDT-SWAP"] # 要运行的交易对                        
 [indicator]
 atr_period = 30 # ATR周期
 ema = 20 # EMA周期
 
 [llm]
-main_model = "google/gemini-3-flash-preview" 
+main_model = "deepseek/deepseek-v3.2" 
 reasoning_effort = "medium" # none|low|medium|high
-risk_analysis_model = "google/gemini-3-flash-preview" 
-simple_analysis_model = "google/gemini-3-flash-preview" 
+risk_analysis_model = "deepseek/deepseek-v3.2" 
+simple_analysis_model = "deepseek/deepseek-v3.2" 
 temperature = 0.2 
 visual_model = "google/gemini-3-flash-preview" 
 
