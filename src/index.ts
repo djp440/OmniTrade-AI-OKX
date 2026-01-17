@@ -3,11 +3,46 @@ import { config } from './util/config.js';
 import logger from './util/logger.js';
 import path from 'path';
 import { fileURLToPath } from 'url';
+import { OKXExchange } from './connect/exchange.js';
+import { OpenAIConnector } from './connect/openai.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
+async function runSelfCheck() {
+    logger.info('开始执行自检程序...');
+
+    // 1. 测试交易所连接 (获取余额)
+    try {
+        logger.info('正在测试交易所连接...');
+        const exchange = OKXExchange.getInstance();
+        const balance = await exchange.getBalance('USDT');
+        logger.info(`交易所连接成功，USDT 余额: ${balance.free} (可用), ${balance.total} (总额)`);
+    } catch (error) {
+        logger.error('交易所连接测试失败:', error);
+        process.exit(1);
+    }
+
+    // 2. 测试 LLM 连接 (发送简单消息并限制 max_tokens)
+    try {
+        logger.info('正在测试 LLM 连接...');
+        const llm = OpenAIConnector.getInstance();
+        // 使用 simple_analysis_model 进行测试
+        const model = config.llm.simple_analysis_model;
+        const testPrompt = 'Hello, this is a connection test. Reply "OK" if you receive this.';
+        const response = await llm.chat('You are a test assistant.', testPrompt, model, { max_tokens: 10 });
+        logger.info(`LLM 连接成功，测试响应: ${response}`);
+    } catch (error) {
+        logger.error('LLM 连接测试失败:', error);
+        process.exit(1);
+    }
+
+    logger.info('自检程序通过，准备启动主逻辑...');
+}
+
 async function main() {
+    await runSelfCheck();
+
     const symbols = config.trade.symbols;
 
     if (!symbols || symbols.length === 0) {
