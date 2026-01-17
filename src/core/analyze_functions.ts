@@ -13,11 +13,8 @@ import { calculateATRPercentage } from "../util/indicator.js";
  */
 export async function analyzeImage(interval: string, imageUrl: string) {
   const systemPrompt = config.system_prompt.visual;
-  let userPrompt = `这是${interval}周期的k线图表。`;
-  if (config.trade.paperTrade) {
-    userPrompt +=
-      "模拟盘已启用，由于流动性问题，你可能会看到波动率极大、或充满毛刺的k线图。";
-  }
+  const userPrompt = `这是${interval}周期的k线图表。`;
+
   const analysis = await openaiConnector.analyzeImage(
     systemPrompt,
     userPrompt,
@@ -40,12 +37,8 @@ export async function analyzeOHLCV(
 ) {
   const systemPrompt = config.system_prompt.simple_analysis;
   const formatData = formatCandlesWithEma(ohlcv, ema);
-  let userPrompt = `以下为${interval}周期的ohlcv+ema数据。`;
-  if (config.trade.paperTrade) {
-    userPrompt +=
-      "模拟盘已启用，由于流动性问题，你可能会看到波动率极大、或充满毛刺的k线图。\n";
-  }
-  userPrompt += formatData;
+  const userPrompt = `以下为${interval}周期的ohlcv+ema数据。\n`+formatData;
+
   const analysis = await openaiConnector.chat(
     systemPrompt,
     userPrompt,
