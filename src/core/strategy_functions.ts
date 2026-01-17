@@ -3,7 +3,7 @@ import { openaiConnector } from "../connect/openai.js";
 import { formatCandlesWithEma } from "../util/format.js";
 import { Candle } from "../model/candle.js";
 import { okxExchange, OKXExchange } from "../connect/exchange.js";
-
+import { calculateATRPercentage } from "../util/indicator.js";
 
 /**
  * 分析图像
@@ -59,11 +59,11 @@ export async function analyzeOHLCV(
  * @param symbol 交易对
  * @returns 分析结果
  */
-export async function analyzeRisk(symbol: string) {
+export async function analyzeRisk(symbol: string,candels:Candle[]) {
   //获取余额
   const balance = await okxExchange.getBalance();
   const total = balance.getTotal();
-  const balanceText = `当前账户总余额为${total}。\n`;
+  const balanceText = `当前账户总权益为${total}，可用余额为${balance.getFree()}。\n`;
   //获取持仓
   const positions = await okxExchange.getPositions("SWAP", symbol);
   let positionText = ``;
@@ -74,8 +74,11 @@ export async function analyzeRisk(symbol: string) {
   } else {
     positionText = `当前无${symbol}的持仓。\n`;
   }
+  // 计算ATR
+  const atrValues = calculateATRPercentage(candels, config.indicator.atr_period);
+  const atrText = `当前ATR系列值为${atrValues}。\n`;
   // 组合分析文本
-  const analysisText = balanceText + positionText;
+  const analysisText = balanceText + positionText + atrText;
 
   const analysis = openaiConnector.chat(
     config.system_prompt.risk_analysis,

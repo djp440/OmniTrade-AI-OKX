@@ -35,7 +35,8 @@ export interface EnvConfig {
 }
 
 export interface IndicatorConfig {
-    ema: number;
+    ema: number; // EMA周期
+    atr_period: number; // ATR周期
 }
 
 export interface TradeConfig {
@@ -133,6 +134,7 @@ export function loadConfig(): Config {
             },
             indicator: {
                 ema,
+                atr_period: indicatorConfig.atr_period || 50,
             },
             llm: llmConfig,
             system_prompt: systemPrompt,
