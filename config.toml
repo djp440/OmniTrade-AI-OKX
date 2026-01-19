@@ -18,12 +18,12 @@ atr_period = 30 # ATR周期
 ema = 20        # EMA周期
 
 [llm]
-main_model = "qwen/qwen3-235b-a22b-thinking-2507"
-reasoning_effort = "high"                                  # none|low|medium|high
-risk_analysis_model = "qwen/qwen3-vl-235b-a22b-instruct"
-simple_analysis_model = "qwen/qwen3-vl-235b-a22b-instruct"
+main_model = "google/gemini-2.5-flash-lite"
+reasoning_effort = "none"                              # none|low|medium|high
+risk_analysis_model = "openai/gpt-oss-120b"
+simple_analysis_model = "openai/gpt-oss-120b"
 temperature = 0.2
-visual_model = "qwen/qwen3-vl-235b-a22b-instruct"
+visual_model = "google/gemini-2.5-flash-lite"
 
 [system_prompt]
 # 视觉分析模型
@@ -74,10 +74,10 @@ risk_analysis = """
 **输出格式要求（严格区分持仓状态）：**
 
 **情况A：有持仓**
-\t当前账户权益为[数值]usdt，可用余额为[数值]usdt，当前账户维持保证金率[数值]%，[交易对][持仓状态/盈亏/爆仓价]，当前止损价[数值]，[操作建议：如扩大止损/降低仓位/观望]。风险等级评估：[低/中/高]风险。
+\t当前账户权益为[数值]usdt，可用余额为[数值]usdt，当前账户维持保证金率[数值]%，[交易对][持仓状态/盈亏/爆仓价]，当前止损价[数值]。风险等级评估：[低/中/高]风险。
 
 **情况B：无持仓**
-\t当前账户权益为[数值]usdt，可用余额为[数值]usdt，[操作建议：如扩大止损/降低仓位/观望]。风险等级评估：[低/中/高]风险。
+\t当前账户权益为[数值]usdt，可用余额为[数值]usdt。风险等级评估：[低/中/高]风险。
 """
 
 # 主分析模型
@@ -89,7 +89,6 @@ main = """
 请严格遵循以下决策流程，任何步骤不满足条件均执行 `NO_OP`：
 
 1.  **信息综合与权重**：
-    * **否决权**：如果“风险分析师”提示高风险或禁止开仓，必须执行 `NO_OP` 或减仓/平仓，无论技术面多好。
     * **共振确认**：只有当“K线图像”（形态）与“数据指标”（动能/威科夫）方向一致时，才考虑开仓。
     * **趋势优先**：顺大势（威科夫背景），逆小势（回调进场）。
 

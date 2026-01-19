@@ -115,10 +115,10 @@ export async function updateStopLoss(symbol: string, newStopLossPrice: string) {
         // 1. 获取该交易对所有未完成的策略委托
         const algoOrders = await okxExchange.getPendingAlgoOrders(symbol, 'oco'); // 尝试获取 OCO 订单
         const conditionalOrders = await okxExchange.getPendingAlgoOrders(symbol, 'conditional'); // 尝试获取单向止损订单
-        
+
         // 合并列表
         const allOrders = [...algoOrders, ...conditionalOrders];
-        
+
         if (allOrders.length === 0) {
             logger.warn(`未找到交易对 ${symbol} 的未完成策略委托，无法修改止损`);
             return null;
@@ -138,7 +138,7 @@ export async function updateStopLoss(symbol: string, newStopLossPrice: string) {
         // 3. 修改止损价格
         for (const order of slOrders) {
             logger.info(`找到止损订单: algoId=${order.algoId}, 当前止损=${order.slTriggerPx}`);
-            
+
             const params = {
                 instId: symbol,
                 algoId: order.algoId,
@@ -149,7 +149,7 @@ export async function updateStopLoss(symbol: string, newStopLossPrice: string) {
 
             // 如果原订单是 OCO 且有止盈，可能需要检查是否需要传 newTpTriggerPx? 
             // OKX 文档: 可选参数，不传则不修改。
-            
+
             const result = await okxExchange.amendAlgoOrder(params);
             logger.info(`修改止损成功: ${JSON.stringify(result)}`);
             results.push(result);

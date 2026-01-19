@@ -60,7 +60,7 @@ export async function getInstruments(instType: string, uly?: string, instId?: st
 export async function getCandles(instId: string, bar: string = '1m', limit: number = 100, after?: string, before?: string): Promise<Candle[]> {
     try {
         const exchange = OKXExchange.getInstance();
-        
+
         // 确保使用 UTC 时间的 K 线 (针对 6H 及以上周期)
         // OKX 默认 6H/12H/1D/1W/1M 为香港时间，加上 utc 后缀转为 UTC 时间
         let utcBar = bar;
