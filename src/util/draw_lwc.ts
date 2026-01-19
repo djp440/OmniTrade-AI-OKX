@@ -1,9 +1,9 @@
-import puppeteer from 'puppeteer';
 import path from 'path';
 import fs from 'fs';
 import dayjs from 'dayjs';
 import { Candle } from '../model/candle.js';
 import logger from './logger.js';
+import { getBrowser } from './puppeteer_instance.js';
 
 /**
  * 使用 Lightweight Charts 生成 K 线图图片
@@ -64,13 +64,10 @@ export async function drawKLineChartLWC(
         };
     }).filter(item => item !== null);
 
-    let browser;
+    let page;
     try {
-        browser = await puppeteer.launch({
-            headless: true,
-            args: ['--no-sandbox', '--disable-setuid-sandbox'] // 常用容器/CI配置
-        });
-        const page = await browser.newPage();
+        const browser = await getBrowser();
+        page = await browser.newPage();
 
         // 设置视口大小
         await page.setViewport({ width, height });
@@ -202,8 +199,10 @@ export async function drawKLineChartLWC(
 
         // 截图
         // 等待一小会儿确保渲染完成 (requestAnimationFrame)
-        // LWC 渲染非常快，但 Puppeteer 截图可能太快
-        await new Promise(r => setTimeout(r, 500));
+        // 优化：使用 requestAnimationFrame 确保至少渲染了一帧
+        await page.evaluate(() => new Promise<void>(resolve => {
+            requestAnimationFrame(() => setTimeout(resolve, 50));
+        }));
 
         const element = await page.$('#container');
         if (!element) throw new Error('Container not found');
@@ -216,8 +215,8 @@ export async function drawKLineChartLWC(
         logger.error('Error generating LWC chart:', error);
         throw error;
     } finally {
-        if (browser) {
-            await browser.close();
+        if (page) {
+            await page.close();
         }
     }
 }
