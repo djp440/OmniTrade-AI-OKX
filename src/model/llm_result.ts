@@ -19,6 +19,24 @@ export interface ILLMAnalysisResultData {
   risk_score?: number | null;
 }
 
+export interface IBullAnalysisResult {
+  bull_confidence: number;
+  scenario_prediction: string;
+  action: string;
+  reason: string;
+  stop_loss?: number | null;
+  quantity?: number | null;
+}
+
+export interface IBearAnalysisResult {
+  bear_confidence: number;
+  scenario_prediction: string;
+  action: string;
+  reason: string;
+  stop_loss?: number | null;
+  quantity?: number | null;
+}
+
 /**
  * LLM 分析结果封装类
  */

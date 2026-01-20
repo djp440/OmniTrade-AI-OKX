@@ -50,8 +50,8 @@ export interface LlmModelConfig {
   visual_model: string;
   simple_analysis_model: string;
   risk_analysis_model: string;
-  main_model: string;
-  reviewer_model: string;
+  bull_model: string;
+  bear_model: string;
   arbiter_model: string;
   compress_llm: string;
   max_compress: number;
@@ -69,8 +69,8 @@ export interface Config {
     visual: string;
     simple_analysis: string;
     risk_analysis: string;
-    main: string;
-    reviewer: string;
+    bull: string;
+    bear: string;
     arbiter: string;
     compress: string;
   };
@@ -117,8 +117,8 @@ export function loadConfig(): Config {
         tomlConfig.llm?.simple_analysis_model || "gpt-3.5-turbo",
       risk_analysis_model:
         tomlConfig.llm?.risk_analysis_model || "gpt-3.5-turbo",
-      main_model: tomlConfig.llm?.main_model || "gpt-4o-mini",
-      reviewer_model: tomlConfig.llm?.reviewer_model || "gpt-4o-mini",
+      bull_model: tomlConfig.llm?.bull_model || "gpt-4o-mini",
+      bear_model: tomlConfig.llm?.bear_model || "gpt-4o-mini",
       arbiter_model: tomlConfig.llm?.arbiter_model || "gpt-4o-mini",
       compress_llm: tomlConfig.llm?.compress_llm || "gpt-3.5-turbo",
       max_compress: tomlConfig.llm?.max_compress || 42,
@@ -131,8 +131,8 @@ export function loadConfig(): Config {
       visual: promptsConfig.visual || "",
       simple_analysis: promptsConfig.simple_analysis || "",
       risk_analysis: promptsConfig.risk_analysis || "",
-      main: promptsConfig.main || "",
-      reviewer: promptsConfig.reviewer || "",
+      bull: promptsConfig.bull || "",
+      bear: promptsConfig.bear || "",
       arbiter: promptsConfig.arbiter || "",
       compress: promptsConfig.compress || "",
     };
