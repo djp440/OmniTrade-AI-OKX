@@ -2,9 +2,9 @@ import {
   openMarketOrderWithTPSL,
   updateStopLoss,
   closeAllPositions,
-} from "../connect/trade.js";
-import { okxExchange } from "../connect/exchange.js";
-import logger from "../util/logger.js";
+} from "../connect/trade.ts";
+import { okxExchange } from "../connect/exchange.ts";
+import logger from "../util/logger.ts";
 
 async function testUpdateSL() {
   const symbol = "ETH-USDT-SWAP"; // Use ETH for test

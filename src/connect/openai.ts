@@ -1,6 +1,6 @@
 import { OpenAI } from "openai";
-import { config } from "../util/config.js";
-import logger from "../util/logger.js";
+import { config } from "../util/config.ts";
+import logger from "../util/logger.ts";
 
 /**
  * OpenAI 连接封装类

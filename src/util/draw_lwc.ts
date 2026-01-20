@@ -1,7 +1,7 @@
 import dayjs from 'dayjs';
-import { Candle } from '../model/candle.js';
-import logger from './logger.js';
-import { getSharedPage } from './puppeteer_instance.js';
+import { Candle } from '../model/candle.ts';
+import logger from './logger.ts';
+import { getSharedPage } from './puppeteer_instance.ts';
 
 // Mutex to ensure chart generation is serialized on the shared page
 let chartMutex = Promise.resolve();

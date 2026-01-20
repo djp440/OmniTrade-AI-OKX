@@ -2,21 +2,23 @@ import { Worker } from 'worker_threads';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import { EventEmitter } from 'events';
-import { config } from '../util/config.js';
-import logger from '../util/logger.js';
-import { OKXExchange } from '../connect/exchange.js';
-import { OpenAIConnector } from '../connect/openai.js';
+import { config } from '../util/config.ts';
+import logger from '../util/logger.ts';
+import { OKXExchange } from '../connect/exchange.ts';
+import { OpenAIConnector } from '../connect/openai.ts';
 
-import { logEmitter, LOG_EVENT } from '../util/log_emitter.js';
+import { logEmitter, LOG_EVENT } from '../util/log_emitter.ts';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-export enum BotStatus {
-    IDLE = 'IDLE',
-    RUNNING = 'RUNNING',
-    STOPPED = 'STOPPED', // Distinct from IDLE? Maybe IDLE is initial state.
-}
+export const BotStatus = {
+    IDLE: 'IDLE',
+    RUNNING: 'RUNNING',
+    STOPPED: 'STOPPED', // Distinct from IDLE? Maybe IDLE is initial state.
+} as const;
+
+export type BotStatus = typeof BotStatus[keyof typeof BotStatus];
 
 export class BotManager extends EventEmitter {
     private static instance: BotManager;

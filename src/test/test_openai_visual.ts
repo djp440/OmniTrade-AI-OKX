@@ -2,19 +2,19 @@ async function testVisualAnalysis() {
     try {
         console.log('Importing modules...');
         // 使用新的 Lightweight Charts 生成器
-        const { drawKLineChartLWC } = await import('../util/draw_lwc.js');
-        const { Candle } = await import('../model/candle.js');
-        const { calculateEMA } = await import('../util/indicator.js');
-        const { openaiConnector } = await import('../connect/openai.js');
-        const { config } = await import('../util/config.js');
-        const { default: logger } = await import('../util/logger.js');
+        const { drawKLineChartLWC } = await import('../util/draw_lwc.ts');
+        const { Candle } = await import('../model/candle.ts');
+        const { calculateEMA } = await import('../util/indicator.ts');
+        const { OpenAIConnector } = await import('../connect/openai.ts');
+        const { config } = await import('../util/config.ts');
+        const { default: logger } = await import('../util/logger.ts');
         const fs = await import('fs');
         const path = await import('path');
 
         logger.info('开始视觉分析测试 (使用 Lightweight Charts)...');
         // 1. 获取真实k线数据
         const period = '1D';
-        const { getCandles } = await import('../connect/market.js');
+        const { getCandles } = await import('../connect/market.ts');
         // 获取的数据通常是倒序的 (最新 -> 最旧)
         const candles: any[] = await getCandles('BTC-USDT-SWAP', period, 200);
 
@@ -40,7 +40,7 @@ async function testVisualAnalysis() {
         const userPrompt = `这是最新的 BTC-USDT ${period} K 线图，请分析当前市场走势并给出交易建议。`;
 
         logger.info(`正在调用模型 ${config.llm.visual_model} 进行分析...`);
-        const analysis = await openaiConnector.analyzeImage(
+        const analysis = await OpenAIConnector.getInstance().analyzeImage(
             systemPrompt,
             userPrompt,
             base64Chart

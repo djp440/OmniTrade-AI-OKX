@@ -1,5 +1,5 @@
-import { okxExchange } from '../connect/exchange.js';
-import logger from '../util/logger.js';
+import { okxExchange } from '../connect/exchange.ts';
+import logger from '../util/logger.ts';
 
 async function testSystemTime() {
     try {

@@ -5,27 +5,29 @@ import dayjs from 'dayjs';
 import path from 'path';
 import fs from 'fs';
 import { parentPort, isMainThread } from 'worker_threads';
-import { logEmitter, LOG_EVENT } from './log_emitter.js';
+import { logEmitter, LOG_EVENT } from './log_emitter.ts';
 
-// 定义支持的颜色枚举
-export enum LogColor {
-    Red = 'red',
-    Green = 'green',
-    Yellow = 'yellow',
-    Blue = 'blue',
-    Magenta = 'magenta',
-    Cyan = 'cyan',
-    White = 'white',
-    Gray = 'gray',
-    Black = 'black',
-    RedBright = 'redBright',
-    GreenBright = 'greenBright',
-    YellowBright = 'yellowBright',
-    BlueBright = 'blueBright',
-    MagentaBright = 'magentaBright',
-    CyanBright = 'cyanBright',
-    WhiteBright = 'whiteBright',
-}
+// 定义支持的颜色常量
+export const LogColor = {
+    Red: 'red',
+    Green: 'green',
+    Yellow: 'yellow',
+    Blue: 'blue',
+    Magenta: 'magenta',
+    Cyan: 'cyan',
+    White: 'white',
+    Gray: 'gray',
+    Black: 'black',
+    RedBright: 'redBright',
+    GreenBright: 'greenBright',
+    YellowBright: 'yellowBright',
+    BlueBright: 'blueBright',
+    MagentaBright: 'magentaBright',
+    CyanBright: 'cyanBright',
+    WhiteBright: 'whiteBright',
+} as const;
+
+export type LogColor = typeof LogColor[keyof typeof LogColor];
 
 // 确保 logs 目录存在
 const logsDir = path.resolve(process.cwd(), 'logs');

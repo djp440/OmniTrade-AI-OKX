@@ -1,4 +1,4 @@
-import logger, { LogColor } from "./logger.js";
+import logger, { LogColor } from "./logger.ts";
 
 interface RetryOptions {
   maxRetries?: number;

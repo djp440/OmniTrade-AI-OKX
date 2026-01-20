@@ -4,10 +4,10 @@ import path from 'path';
 async function runRealDataTest() {
     try {
         console.log('Importing modules...');
-        const { calculateEMA } = await import('../util/indicator.js');
-        const { drawKLineChartLWC } = await import('../util/draw_lwc.js');
-        const { getCandles } = await import('../connect/market.js');
-        const { default: logger } = await import('../util/logger.js');
+        const { calculateEMA } = await import('../util/indicator.ts');
+        const { drawKLineChartLWC } = await import('../util/draw_lwc.ts');
+        const { getCandles } = await import('../connect/market.ts');
+        const { default: logger } = await import('../util/logger.ts');
 
         const symbol = 'BTC-USDT-SWAP';
         const period = '1D';

@@ -3,9 +3,9 @@ import {
   calculateEMA20,
   calculateATR,
   calculateATRPercentage,
-} from "../util/indicator.js";
-import { Candle } from "../model/candle.js";
-import { getCandles } from "../connect/market.js";
+} from "../util/indicator.ts";
+import { Candle } from "../model/candle.ts";
+import { getCandles } from "../connect/market.ts";
 // Test case 1: Simple number array with period 3
 const prices = [10, 11, 12, 13, 14];
 const period = 3;

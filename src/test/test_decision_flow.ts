@@ -1,10 +1,10 @@
 import fs from "fs";
 import path from "path";
-import { config } from "../util/config.js";
-import logger, { LogColor } from "../util/logger.js";
-import { getCandles } from "../connect/market.js";
-import { drawKLineChartLWC } from "../util/draw_lwc.js";
-import { calculateEMA } from "../util/indicator.js";
+import { config } from "../util/config.ts";
+import logger, { LogColor } from "../util/logger.ts";
+import { getCandles } from "../connect/market.ts";
+import { drawKLineChartLWC } from "../util/draw_lwc.ts";
+import { calculateEMA } from "../util/indicator.ts";
 import {
   analyzeImage,
   analyzeOHLCV,
@@ -12,10 +12,12 @@ import {
   analyzeBull,
   analyzeBear,
   arbiterDecision,
-} from "../core/analyze_functions.js";
-import { readHistory } from "../util/history_manager.js";
-import { Candle } from "../model/candle.js";
-import { closeBrowser } from "../util/puppeteer_instance.js";
+  compressDecision,
+} from "../core/analyze_functions.ts";
+import { trade } from "../core/trade_functions.ts";
+import { readHistory } from "../util/history_manager.ts";
+import { Candle } from "../model/candle.ts";
+import { closeBrowser } from "../util/puppeteer_instance.ts";
 
 /**
  * 周期配置类型

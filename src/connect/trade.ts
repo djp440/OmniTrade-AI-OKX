@@ -1,5 +1,5 @@
-import { okxExchange } from './exchange.js';
-import logger from '../util/logger.js';
+import { okxExchange, OKXExchange } from './exchange.ts';
+import logger from '../util/logger.ts';
 
 /**
  * 市价开仓
@@ -17,7 +17,7 @@ export async function openMarketOrder(symbol: string, side: 'buy' | 'sell', size
             ordType: 'market',
             sz: size
         };
-        const result = await okxExchange.placeOrder(params);
+        const result = await OKXExchange.getInstance().placeOrder(params);
         logger.info(`市价开仓成功: ${JSON.stringify(result)}`);
         return result;
     } catch (error) {
@@ -73,7 +73,7 @@ export async function openMarketOrderWithTPSL(
 
         // logger.info(`下单参数: ${JSON.stringify(params)}`);
 
-        const result = await okxExchange.placeOrder(params);
+        const result = await OKXExchange.getInstance().placeOrder(params);
         logger.info(`市价开仓(带止盈止损)成功: ${JSON.stringify(result)}`);
         return result;
     } catch (error) {
@@ -95,7 +95,7 @@ export async function closeAllPositions(symbol: string) {
             mgnMode: 'cross',
             // net 模式下不需要 posSide
         };
-        const result = await okxExchange.closePosition(params);
+        const result = await OKXExchange.getInstance().closePosition(params);
         logger.info(`市价全平成功: ${JSON.stringify(result)}`);
         return result;
     } catch (error) {

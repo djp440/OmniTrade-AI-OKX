@@ -1,7 +1,7 @@
-import { openMarketOrder, openMarketOrderWithTPSL, closeAllPositions } from '../connect/trade.js';
-import { okxExchange } from '../connect/exchange.js';
-import logger from '../util/logger.js';
-import { Position } from '../model/position.js';
+import { openMarketOrder, openMarketOrderWithTPSL, closeAllPositions } from '../connect/trade.ts';
+import { okxExchange } from '../connect/exchange.ts';
+import logger from '../util/logger.ts';
+import { Position } from '../model/position.ts';
 
 const SYMBOL = 'BTC-USDT-SWAP';
 

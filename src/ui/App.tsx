@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { Box, Text, useApp, useInput } from 'ink';
 import SelectInput from 'ink-select-input';
-import { BotManager, BotStatus } from '../core/bot_manager.js';
-import { StatusHeader } from './components/StatusHeader.js';
-import { LogViewer } from './components/LogViewer.js';
+import { BotManager, BotStatus } from '../core/bot_manager.ts';
+import { StatusHeader } from './components/StatusHeader.tsx';
+import { LogViewer } from './components/LogViewer.tsx';
 
 const bot = BotManager.getInstance();
 

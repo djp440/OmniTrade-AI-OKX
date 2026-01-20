@@ -1,12 +1,42 @@
-import { OKXExchange } from './exchange.js';
-import { Instrument, IInstrumentData } from '../model/instrument.js';
-import { Candle } from '../model/candle.js';
-import logger from '../util/logger.js';
+import { OKXExchange } from './exchange.ts';
+import { Instrument } from '../model/instrument.ts';
+import type { IInstrumentData } from '../model/instrument.ts';
+import type { ITickerData } from '../model/ticker.ts';
+import { Candle } from '../model/candle.ts';
+import logger from '../util/logger.ts';
 
 /**
  * 市场数据模块
  * 负责获取行情、产品信息等
  */
+
+/**
+ * 获取单个产品行情信息
+ * GET /api/v5/market/ticker
+ * 
+ * @param instId 产品ID，如 BTC-USDT-SWAP
+ * @returns ITickerData 对象
+ */
+export async function getTicker(instId: string): Promise<ITickerData | null> {
+    try {
+        const exchange = OKXExchange.getInstance();
+        const params = {
+            instId
+        };
+
+        const data = await exchange.request('GET', '/api/v5/market/ticker', params);
+
+        if (Array.isArray(data) && data.length > 0) {
+            return data[0] as ITickerData;
+        } else {
+            logger.error(`获取行情信息失败: 返回数据为空`);
+            return null;
+        }
+    } catch (error) {
+        logger.error(`获取行情信息异常: ${error instanceof Error ? error.message : String(error)}`);
+        throw error;
+    }
+}
 
 /**
  * 获取所有交易产品基础信息

@@ -6,6 +6,8 @@
     "module": "nodenext",
     "target": "esnext",
     "moduleResolution": "nodenext",
+    "allowImportingTsExtensions": true,
+    "noEmit": true,
     "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,
     "skipLibCheck": true,

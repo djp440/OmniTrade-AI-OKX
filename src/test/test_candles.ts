@@ -1,7 +1,7 @@
 
-import { getCandles } from '../connect/market.js';
-import logger from '../util/logger.js';
-import {config} from '../util/config.js';
+import { getCandles } from '../connect/market.ts';
+import logger from '../util/logger.ts';
+import {config} from '../util/config.ts';
 
 async function testCandles() {
     try {

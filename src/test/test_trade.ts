@@ -1,6 +1,6 @@
-// import { okxTrade } from '../connect/trade.js';
-// import { okxExchange } from '../connect/exchange.js';
-// import logger from '../util/logger.js';
+import { okxExchange } from "../connect/exchange.ts";
+import logger from "../util/logger.ts";
+import { openMarketOrder, closePosition } from "../connect/trade.ts";
 
 // async function testTrade() {
 //     try {

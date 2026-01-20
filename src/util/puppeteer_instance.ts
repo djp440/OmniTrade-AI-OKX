@@ -1,5 +1,5 @@
 import puppeteer, { Browser, Page } from 'puppeteer';
-import logger from './logger.js';
+import logger from './logger.ts';
 import path from 'path';
 
 let browserInstance: Browser | null = null;

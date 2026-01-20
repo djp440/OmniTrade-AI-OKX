@@ -1,4 +1,4 @@
-import { Candle } from "../model/candle.js";
+import { Candle } from "../model/candle.ts";
 
 /**
  * 计算指数移动平均线 (EMA)

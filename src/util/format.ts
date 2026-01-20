@@ -1,4 +1,4 @@
-import { Candle } from "../model/candle.js";
+import { Candle } from "../model/candle.ts";
 import dayjs from "dayjs";
 
 /**

@@ -1,11 +1,12 @@
-import { config } from "../util/config.js";
-import logger, { LogColor } from "../util/logger.js";
-import { getCandles } from "../connect/market.js";
+import { config } from "../util/config.ts";
+import logger, { LogColor } from "../util/logger.ts";
+import { getCandles } from "../connect/market.ts";
 import { parentPort, workerData, isMainThread } from "worker_threads";
-import { drawKLineChartLWC } from "../util/draw_lwc.js";
-import { calculateEMA } from "../util/indicator.js";
-import { withRetry } from "../util/retry.js";
-import { trade } from "./trade_functions.js";
+import { drawKLineChartLWC } from "../util/draw_lwc.ts";
+import { calculateEMA } from "../util/indicator.ts";
+import { withRetry } from "../util/retry.ts";
+import { trade } from "./trade_functions.ts";
+import { Candle } from "../model/candle.ts";
 import {
   analyzeImage,
   analyzeOHLCV,
@@ -14,8 +15,8 @@ import {
   analyzeBear,
   arbiterDecision,
   compressDecision,
-} from "./analyze_functions.js";
-import { appendHistory } from "../util/history_manager.js";
+} from "./analyze_functions.ts";
+import { appendHistory } from "../util/history_manager.ts";
 
 // 获取k线周期配置参数
 const microInterval = config.candle.micro_interval;
@@ -318,9 +319,7 @@ riskAnalysis:
 
 // 如果直接运行此文件
 import { fileURLToPath } from "url";
-import { Candle } from "../model/candle.js";
-import { color } from "echarts/types/dist/core";
-// import { trade } from "./trade_functions.js"; // 已移动到顶部引用
+// import { trade } from "./trade_functions.ts"; // 已移动到顶部引用
 const isMainModule = process.argv[1] === fileURLToPath(import.meta.url);
 
 if (!isMainThread) {

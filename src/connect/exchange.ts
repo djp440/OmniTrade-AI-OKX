@@ -1,8 +1,8 @@
 import crypto from "crypto-js";
-import { config } from "../util/config.js";
-import logger from "../util/logger.js";
-import { Balance } from "../model/balance.js";
-import { Position } from "../model/position.js";
+import { config } from "../util/config.ts";
+import logger from "../util/logger.ts";
+import { Balance } from "../model/balance.ts";
+import { Position } from "../model/position.ts";
 
 /**
  * OKX 交易所连接封装类 (原生 API V5 实现)

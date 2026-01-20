@@ -1,5 +1,5 @@
-import { Candle } from "../model/candle.js";
-import { formatCandlesWithEma } from "../util/format.js";
+import { Candle } from "../model/candle.ts";
+import { formatCandlesWithEma } from "../util/format.ts";
 
 async function test() {
   // Mock data

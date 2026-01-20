@@ -1,7 +1,7 @@
 import fs from 'fs';
 import path from 'path';
-import { config } from './config.js';
-import logger from './logger.js';
+import { config } from './config.ts';
+import logger from './logger.ts';
 
 const HISTORY_FILE = path.join(process.cwd(), 'compress.md');
 

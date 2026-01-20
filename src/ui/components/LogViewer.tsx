@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Box, Text } from 'ink';
-import { logEmitter, LOG_EVENT, LogEntry } from '../../util/log_emitter.js';
+import { logEmitter, LOG_EVENT, LogEntry } from '../../util/log_emitter.ts';
 
 interface Props {
     height?: number | string;

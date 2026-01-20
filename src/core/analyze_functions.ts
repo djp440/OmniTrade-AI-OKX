@@ -1,12 +1,12 @@
-import { config } from "../util/config.js";
-import { openaiConnector } from "../connect/openai.js";
-import { formatCandlesWithEma } from "../util/format.js";
-import { Candle } from "../model/candle.js";
-import { LLMAnalysisResult } from "../model/llm_result.js";
-import { BullAnalysisResult, BearAnalysisResult } from "../model/agent_result.js";
-import { okxExchange, OKXExchange } from "../connect/exchange.js";
-import { calculateATRPercentage } from "../util/indicator.js";
-import { readHistory } from "../util/history_manager.js";
+import { config } from "../util/config.ts";
+import { openaiConnector, OpenAIConnector } from "../connect/openai.ts";
+import { formatCandlesWithEma } from "../util/format.ts";
+import { Candle } from "../model/candle.ts";
+import { LLMAnalysisResult } from "../model/llm_result.ts";
+import type { BullAnalysisResult, BearAnalysisResult } from "../model/agent_result.ts";
+import { OKXExchange } from "../connect/exchange.ts";
+import { calculateATRPercentage } from "../util/indicator.ts";
+import { readHistory } from "../util/history_manager.ts";
 
 /**
  * 分析图像
@@ -57,11 +57,11 @@ export async function analyzeOHLCV(
  */
 export async function analyzeRisk(symbol: string, candels: Candle[]) {
   //获取余额
-  const balance = await okxExchange.getBalance();
-  const total = balance.getTotal();
-  const balanceText = `当前账户总权益为${total}，可用余额为${balance.getFree()}。\n`;
+  const balance = await OKXExchange.getInstance().getBalance('USDT');
+  const total = balance.total;
+  const balanceText = `当前账户总权益为${total}，可用余额为${balance.free}。\n`;
   //获取持仓
-  const positions = await okxExchange.getPositions("SWAP", symbol);
+  const positions = await OKXExchange.getInstance().getPositions("SWAP", symbol);
   let positionText = ``;
   if (positions.length > 0) {
     const position = positions[0];
@@ -74,8 +74,8 @@ export async function analyzeRisk(symbol: string, candels: Candle[]) {
   // 获取止损单信息
   let slText = ``;
   try {
-    const algoOrders = await okxExchange.getPendingAlgoOrders(symbol, "oco");
-    const conditionalOrders = await okxExchange.getPendingAlgoOrders(
+    const algoOrders = await OKXExchange.getInstance().getPendingAlgoOrders(symbol, "oco");
+    const conditionalOrders = await OKXExchange.getInstance().getPendingAlgoOrders(
       symbol,
       "conditional",
     );
@@ -99,7 +99,7 @@ export async function analyzeRisk(symbol: string, candels: Candle[]) {
   // 组合分析文本
   const analysisText = balanceText + positionText + slText;
 
-  const analysis = openaiConnector.chat(
+  const analysis = await openaiConnector.chat(
     config.system_prompt.risk_analysis,
     analysisText,
     config.llm.risk_analysis_model,

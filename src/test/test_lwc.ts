@@ -4,9 +4,9 @@ import path from 'path';
 async function runTest() {
     try {
         console.log('Importing modules...');
-        const { Candle } = await import('../model/candle.js');
-        const { calculateEMA } = await import('../util/indicator.js');
-        const { drawKLineChartLWC } = await import('../util/draw_lwc.js');
+        const { Candle } = await import('../model/candle.ts');
+        const { calculateEMA } = await import('../util/indicator.ts');
+        const { drawKLineChartLWC } = await import('../util/draw_lwc.ts');
 
         // Mock Candle data
         const mockCandles: any[] = [];

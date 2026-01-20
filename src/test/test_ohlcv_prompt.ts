@@ -1,12 +1,12 @@
 import fs from "fs";
 import path from "path";
 import dayjs from "dayjs";
-import { config } from "../util/config.js";
-import logger from "../util/logger.js";
-import { getCandles } from "../connect/market.js";
-import { calculateEMA } from "../util/indicator.js";
-import { formatCandlesWithEma } from "../util/format.js";
-import { Candle } from "../model/candle.js";
+import { config } from "../util/config.ts";
+import logger from "../util/logger.ts";
+import { getCandles } from "../connect/market.ts";
+import { calculateEMA } from "../util/indicator.ts";
+import { formatCandlesWithEma } from "../util/format.ts";
+import { Candle } from "../model/candle.ts";
 
 async function generateOhlcvPromptMarkdown() {
     const symbols = config.trade.symbols;

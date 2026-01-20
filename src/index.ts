@@ -1,7 +1,7 @@
 import React from 'react';
 import { render } from 'ink';
-import { App } from './ui/App.js';
-import logger from './util/logger.js';
+import { App } from './ui/App.tsx';
+import logger from './util/logger.ts';
 
 // 捕获未处理的异常，防止程序直接崩溃
 process.on('uncaughtException', (err) => {

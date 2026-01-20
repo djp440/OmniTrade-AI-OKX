@@ -1,6 +1,6 @@
-import { openaiConnector } from '../connect/openai.js';
-import { config } from '../util/config.js';
-import logger from '../util/logger.js';
+import { OpenAIConnector } from '../connect/openai.ts';
+import logger from '../util/logger.ts';
+import { config } from '../util/config.ts';
 
 /**
  * 测试 OpenAI 连接器功能
@@ -13,7 +13,7 @@ async function testOpenAI() {
         logger.info('--- 测试基础聊天 ---');
         const systemPrompt = "你是一个助手";
         const userPrompt = "你好，请回复'连接成功'";
-        const chatResponse = await openaiConnector.chat(
+        const chatResponse = await OpenAIConnector.getInstance().chat(
             systemPrompt,
             userPrompt,
             config.llm.simple_analysis_model
@@ -24,7 +24,7 @@ async function testOpenAI() {
         logger.info('--- 测试 JSON 聊天 ---');
         const jsonSystemPrompt = "你是一个返回JSON的助手，请务必只返回JSON格式。";
         const jsonUserPrompt = "请返回一个包含字段 'status' 为 'ok' 的 JSON 对象";
-        const jsonResponse = await openaiConnector.chatWithJson(
+        const jsonResponse = await OpenAIConnector.getInstance().chatWithJson(
             jsonSystemPrompt,
             jsonUserPrompt
         );

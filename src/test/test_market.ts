@@ -1,5 +1,5 @@
-import { getInstruments } from '../connect/market.js';
-import logger from '../util/logger.js';
+import { getInstruments } from '../connect/market.ts';
+import logger from '../util/logger.ts';
 
 async function testMarket() {
     try {

@@ -1,6 +1,6 @@
 import React from 'react';
 import { Box, Text } from 'ink';
-import { BotStatus } from '../../core/bot_manager.js';
+import { BotStatus } from '../../core/bot_manager.ts';
 
 interface Props {
     status: BotStatus;
