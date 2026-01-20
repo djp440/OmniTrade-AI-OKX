@@ -149,12 +149,12 @@ async function testDecisionFlow(symbol: string) {
       `- **交易对**: ${symbol}\n` +
       `- **测试时间**: ${new Date().toLocaleString()}\n\n` +
       `## 1. 角色配置 (Agents & Prompts)\n\n` +
-      `### 决策发起者 (Proposer)\n` +
-      `- Model: ${config.llm.main_model}\n` +
-      `\`\`\`text\n${config.system_prompt.main}\n\`\`\`\n\n` +
-      `### 风控审查员 (Reviewer)\n` +
-      `- Model: ${config.llm.reviewer_model}\n` +
-      `\`\`\`text\n${config.system_prompt.reviewer}\n\`\`\`\n\n` +
+      `### 专业多头决策者 (Bull)\n` +
+      `- Model: ${config.llm.bull_model}\n` +
+      `\`\`\`text\n${config.system_prompt.bull}\n\`\`\`\n\n` +
+      `### 专业空头决策者 (Bear)\n` +
+      `- Model: ${config.llm.bear_model}\n` +
+      `\`\`\`text\n${config.system_prompt.bear}\n\`\`\`\n\n` +
       `### 首席裁决官 (Arbiter)\n` +
       `- Model: ${config.llm.arbiter_model}\n` +
       `\`\`\`text\n${config.system_prompt.arbiter}\n\`\`\`\n\n` +

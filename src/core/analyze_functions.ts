@@ -3,7 +3,7 @@ import logger, { LogColor } from "../util/logger.js";
 import { openaiConnector } from "../connect/openai.js";
 import { formatCandlesWithEma } from "../util/format.js";
 import { Candle } from "../model/candle.js";
-import { LLMAnalysisResult } from "../model/llm_result.js";
+import { IBullAnalysisResult, IBearAnalysisResult, LLMAnalysisResult } from "../model/llm_result.js";
 import { okxExchange, OKXExchange } from "../connect/exchange.js";
 import { calculateATRPercentage } from "../util/indicator.js";
 import { readHistory } from "../util/history_manager.js";
@@ -124,43 +124,43 @@ export async function decision(
     `\n### 当前分析报告:\n` +
     all_analysis;
 
-  // 1. Proposer (决策发起者)
-  logger.info("正在获取 Proposer (决策发起者) 的建议...", {
+  // 1. Parallel Execution: Bull and Bear
+  logger.info("正在并行执行 Bull (多头) 和 Bear (空头) 分析...", {
     color: LogColor.Cyan,
   });
-  const proposalJson = await openaiConnector.chatWithJson(
-    config.system_prompt.main,
+
+  const bullPromise = openaiConnector.chatWithJson(
+    config.system_prompt.bull,
     baseContext,
+    config.llm.bull_model,
   );
-  const proposalResult = new LLMAnalysisResult(proposalJson);
-  logger.info(`Proposer 建议: ${proposalResult.toString()}`, {
-    color: LogColor.Cyan,
-  });
 
-  // 2. Reviewer (风控审查员)
-  logger.info("正在获取 Reviewer (风控审查员) 的审查意见...", {
-    color: LogColor.Magenta,
-  });
-  const reviewContext =
-    baseContext +
-    `\n\n### 决策发起者 (Proposer) 的建议:\n${JSON.stringify(proposalJson, null, 2)}`;
-
-  const reviewJson = await openaiConnector.chatWithJson(
-    config.system_prompt.reviewer,
-    reviewContext,
+  const bearPromise = openaiConnector.chatWithJson(
+    config.system_prompt.bear,
+    baseContext,
+    config.llm.bear_model,
   );
-  const reviewResult = new LLMAnalysisResult(reviewJson);
-  logger.info(`Reviewer 意见: ${reviewResult.toString()}`, {
-    color: LogColor.Magenta,
+
+  const [bullJson, bearJson] = await Promise.all([bullPromise, bearPromise]);
+
+  const bullResult = bullJson as IBullAnalysisResult;
+  const bearResult = bearJson as IBearAnalysisResult;
+
+  logger.info(`Bull 观点: 信心 ${bullResult.bull_confidence}, 预测: ${bullResult.scenario_prediction}`, {
+    color: LogColor.Green,
+  });
+  logger.info(`Bear 观点: 信心 ${bearResult.bear_confidence}, 预测: ${bearResult.scenario_prediction}`, {
+    color: LogColor.Red,
   });
 
-  // 3. Arbiter (首席裁决官)
+  // 2. Arbiter (首席裁决官)
   logger.info("正在获取 Arbiter (首席裁决官) 的最终裁决...", {
     color: LogColor.Yellow,
   });
   const arbiterContext =
-    reviewContext +
-    `\n\n### 风控审查员 (Reviewer) 的审查意见:\n${JSON.stringify(reviewJson, null, 2)}`;
+    baseContext +
+    `\n\n### 专业多头决策者 (Bull) 的观点:\n${JSON.stringify(bullResult, null, 2)}` +
+    `\n\n### 专业空头决策者 (Bear) 的观点:\n${JSON.stringify(bearResult, null, 2)}`;
 
   const arbiterJson = await openaiConnector.chatWithJson(
     config.system_prompt.arbiter,
