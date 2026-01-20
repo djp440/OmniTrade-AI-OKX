@@ -47,7 +47,7 @@ npm install
 
 ### 运行
 
-开发模式（使用 ts-node）：
+开发模式（使用 tsx）：
 ```bash
 npm start
 ```
